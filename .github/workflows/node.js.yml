@@ -1,7 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: Docker Image CI
 
 on:
   push:
@@ -11,21 +8,60 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '21' # 或者你项目所需的其他 Node.js 版本
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Retrieve the latest tag
+        id: get-latest-tag
+        run: |
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "::set-output name=LATEST_TAG::$latest_tag"
+
+      - name: Calculate new version
+        id: calculate-version
+        run: |
+          LATEST_TAG=${{ steps.get-latest-tag.outputs.LATEST_TAG }}
+          echo "Latest tag: $LATEST_TAG"
+          version_regex="^v([0-9]+)\.([0-9]+)\.([0-9]+)$"
+          if [[ $LATEST_TAG =~ $version_regex ]]; then
+            major="${BASH_REMATCH[1]}"
+            minor="${BASH_REMATCH[2]}"
+            patch="${BASH_REMATCH[3]}"
+            new_patch=$((patch + 1))
+            NEW_VERSION="v$major.$minor.$new_patch"
+          else
+            NEW_VERSION="v1.0.0" # 如果没有有效的 tag，则从 v1.0.0 开始
+          fi
+          echo "New version: $NEW_VERSION"
+          echo "::set-output name=NEW_VERSION::$NEW_VERSION"
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag loveqianqian/yudao-ui-admin-vue3:${{ steps.calculate-version.outputs.NEW_VERSION }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Push the Docker image
+        run: docker push loveqianqian/yudao-ui-admin-vue3:${{ steps.calculate-version.outputs.NEW_VERSION }}
+
+      - name: Create a new tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag ${{ steps.calculate-version.outputs.NEW_VERSION }}
+          git push origin ${{ steps.calculate-version.outputs.NEW_VERSION }}
