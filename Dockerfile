@@ -5,6 +5,6 @@ COPY ./dist-prod /usr/share/nginx/html
 # 替换默认的 Nginx 配置文件
 COPY ./nginx.conf /etc/nginx/nginx.conf
 # 暴露 48080 端口
-EXPOSE 80
+EXPOSE 8080
 # 启动 Nginx 服务器
 CMD ["nginx", "-g", "daemon off;"]
