@@ -195,6 +195,7 @@ export enum DICT_TYPE {
   PROMOTION_BANNER_POSITION = 'promotion_banner_position', // banner 定位
 
   // ========== CRM - 客户管理模块 ==========
+  //空号，停机，正在通话，设置，加微信，己放款，己签约，已上门，未沟通，未跟进
   CRM_AUDIT_STATUS = 'crm_audit_status', // CRM 审批状态
   CRM_BIZ_TYPE = 'crm_biz_type', // CRM 业务类型
   CRM_BUSINESS_END_STATUS_TYPE = 'crm_business_end_status_type', // CRM 商机结束状态类型

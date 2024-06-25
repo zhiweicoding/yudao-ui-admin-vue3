@@ -42,8 +42,8 @@
         </template>
       </el-table-column>
       <el-table-column label="手机" align="center" prop="mobile" width="120" />
-      <el-table-column label="电话" align="center" prop="telephone" width="130" />
-      <el-table-column label="邮箱" align="center" prop="email" width="180" />
+      <el-table-column label="性别" align="center" prop="telephone" width="130" />
+<!--      <el-table-column label="邮箱" align="center" prop="email" width="180" />-->
       <el-table-column label="地址" align="center" prop="detailAddress" width="180" />
       <el-table-column align="center" label="客户行业" prop="industryId" width="100">
         <template #default="scope">

@@ -128,8 +128,8 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="手机" prop="mobile" width="120" />
-      <el-table-column align="center" label="电话" prop="telephone" width="130" />
-      <el-table-column align="center" label="邮箱" prop="email" width="180" />
+      <el-table-column align="center" label="性别" prop="telephone" width="130" />
+<!--      <el-table-column align="center" label="邮箱" prop="email" width="180" />-->
       <el-table-column align="center" label="职位" prop="post" width="120" />
       <el-table-column align="center" label="地址" prop="detailAddress" width="120" />
       <el-table-column align="center" label="关键决策人" prop="master" width="100">

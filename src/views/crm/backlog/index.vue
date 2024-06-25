@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="【通用】跟进记录、待办事项" url="https://doc.iocoder.cn/crm/follow-up/" />
+  <doc-alert title="【通用】跟进记录、待办事项" url="https://doc.iocoder.cn/crm/follow-up/"/>
 
   <el-row :gutter="20">
     <el-col :span="4" class="min-w-[200px]">
@@ -12,19 +12,19 @@
           @click="sideClick(item)"
         >
           {{ item.name }}
-          <el-badge v-if="item.count > 0" :max="99" :value="item.count" />
+          <el-badge v-if="item.count > 0" :max="99" :value="item.count"/>
         </div>
       </div>
     </el-col>
     <el-col :span="20" :xs="24">
-      <CustomerTodayContactList v-if="leftMenu === 'customerTodayContact'" />
-      <ClueFollowList v-if="leftMenu === 'clueFollow'" />
-      <ContractAuditList v-if="leftMenu === 'contractAudit'" />
-      <ReceivableAuditList v-if="leftMenu === 'receivableAudit'" />
-      <ContractRemindList v-if="leftMenu === 'contractRemind'" />
-      <CustomerFollowList v-if="leftMenu === 'customerFollow'" />
-      <CustomerPutPoolRemindList v-if="leftMenu === 'customerPutPoolRemind'" />
-      <ReceivablePlanRemindList v-if="leftMenu === 'receivablePlanRemind'" />
+      <CustomerTodayContactList v-if="leftMenu === 'customerTodayContact'"/>
+      <ClueFollowList v-if="leftMenu === 'clueFollow'"/>
+      <ContractAuditList v-if="leftMenu === 'contractAudit'"/>
+      <ReceivableAuditList v-if="leftMenu === 'receivableAudit'"/>
+      <ContractRemindList v-if="leftMenu === 'contractRemind'"/>
+      <CustomerFollowList v-if="leftMenu === 'customerFollow'"/>
+      <CustomerPutPoolRemindList v-if="leftMenu === 'customerPutPoolRemind'"/>
+      <ReceivablePlanRemindList v-if="leftMenu === 'receivablePlanRemind'"/>
     </el-col>
   </el-row>
 </template>
@@ -43,9 +43,11 @@ import * as ClueApi from '@/api/crm/clue'
 import * as ContractApi from '@/api/crm/contract'
 import * as ReceivableApi from '@/api/crm/receivable'
 import * as ReceivablePlanApi from '@/api/crm/receivable/plan'
+import {CACHE_KEY, useCache} from "@/hooks/web/useCache";
 
-defineOptions({ name: 'CrmBacklog' })
+defineOptions({name: 'CrmBacklog'})
 
+const {wsCache} = useCache()
 const leftMenu = ref('customerTodayContact')
 
 const clueFollowCount = ref(0)
@@ -105,31 +107,76 @@ const sideClick = (item: any) => {
   leftMenu.value = item.menu
 }
 
-const getCount = () => {
+const getCount = (permissions) => {
   CustomerApi.getTodayContactCustomerCount().then(
     (count) => (customerTodayContactCount.value = count)
   )
+
   CustomerApi.getPutPoolRemindCustomerCount().then(
     (count) => (customerPutPoolRemindCount.value = count)
   )
-  CustomerApi.getFollowCustomerCount().then((count) => (customerFollowCount.value = count))
-  ClueApi.getFollowClueCount().then((count) => (clueFollowCount.value = count))
-  ContractApi.getAuditContractCount().then((count) => (contractAuditCount.value = count))
-  ContractApi.getRemindContractCount().then((count) => (contractRemindCount.value = count))
-  ReceivableApi.getAuditReceivableCount().then((count) => (receivableAuditCount.value = count))
-  ReceivablePlanApi.getReceivablePlanRemindCount().then(
-    (count) => (receivablePlanRemindCount.value = count)
+
+  CustomerApi.getFollowCustomerCount().then(
+    (count) => (customerFollowCount.value = count)
   )
+
+  ClueApi.getFollowClueCount().then(
+    (count) => (clueFollowCount.value = count)
+  )
+
+  if (permissions.includes('crm:contract:query')) {
+    // 获得待审核合同数量
+    ///crm/contract/audit-count
+    ContractApi.getAuditContractCount().then(
+      (count) => (contractAuditCount.value = count)
+    )
+  }else{
+    leftSides.value = leftSides.value.filter(item => item.menu !== 'contractAudit')
+  }
+
+  if (permissions.includes('crm:contract:query')) {
+    //获得即将到期（提醒）的合同数量
+    ///crm/contract/remind-count
+    ContractApi.getRemindContractCount().then(
+      (count) => (contractRemindCount.value = count)
+    )
+  }else{
+    leftSides.value = leftSides.value.filter(item => item.menu !== 'contractRemind')
+  }
+
+  if (permissions.includes('crm:receivable:query')) {
+    //获得待审核回款数量
+    ///crm/receivable/audit-count
+    ReceivableApi.getAuditReceivableCount().then(
+      (count) => (receivableAuditCount.value = count)
+    )
+  }else{
+    leftSides.value = leftSides.value.filter(item => item.menu !== 'receivableAudit')
+  }
+
+  if (permissions.includes('crm:receivable-plan:query')) {
+    //获得待回款提醒数量
+    ///crm/receivable-plan/remind-count
+    ReceivablePlanApi.getReceivablePlanRemindCount().then(
+      (count) => (receivablePlanRemindCount.value = count)
+    )
+  }else{
+    leftSides.value = leftSides.value.filter(item => item.menu !== 'receivablePlanRemind')
+  }
 }
 
 /** 激活时 */
 onActivated(async () => {
-  getCount()
+  let userInfo = wsCache.get(CACHE_KEY.USER)
+  let permissions = userInfo.permissions
+  getCount(permissions)
 })
 
 /** 初始化 */
 onMounted(async () => {
-  getCount()
+  let userInfo = wsCache.get(CACHE_KEY.USER)
+  let permissions = userInfo.permissions
+  getCount(permissions)
 })
 </script>
 

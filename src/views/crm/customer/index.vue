@@ -132,24 +132,24 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="客户来源" prop="source" width="100">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_SOURCE" :value="scope.row.source"/>
-        </template>
-      </el-table-column>
+<!--      <el-table-column align="center" label="客户来源" prop="source" width="100">-->
+<!--        <template #default="scope">-->
+<!--          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_SOURCE" :value="scope.row.source"/>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column align="center" label="手机" prop="mobile" width="120"/>
-      <el-table-column align="center" label="电话" prop="telephone" width="130"/>
+      <el-table-column align="center" label="性别" prop="telephone" width="130"/>
       <el-table-column align="center" label="备注" prop="remark" width="200"/>
       <el-table-column align="center" label="客户级别" prop="level" width="135">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_LEVEL" :value="scope.row.level"/>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="客户行业" prop="industryId" width="100">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_INDUSTRY" :value="scope.row.industryId"/>
-        </template>
-      </el-table-column>
+<!--      <el-table-column align="center" label="客户行业" prop="industryId" width="100">-->
+<!--        <template #default="scope">-->
+<!--          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_INDUSTRY" :value="scope.row.industryId"/>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column
         :formatter="dateFormatter"
         align="center"
@@ -157,7 +157,7 @@
         prop="contactNextTime"
         width="180px"
       />
-      <el-table-column align="center" label="邮箱" prop="email" width="140"/>
+<!--      <el-table-column align="center" label="邮箱" prop="email" width="140"/>-->
       <el-table-column align="center" label="锁定状态" prop="lockStatus">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.lockStatus"/>
