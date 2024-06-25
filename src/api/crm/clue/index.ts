@@ -67,6 +67,11 @@ export const transferClue = async (data: TransferReqVO) => {
   return await request.put({ url: '/crm/clue/transfer', data })
 }
 
+// 线索转移
+export const batchTransferClue = async (data: Array<TransferReqVO>) => {
+  return await request.put({ url: '/crm/clue/batchTransfer', data })
+}
+
 // 线索转化为客户
 export const transformClue = async (id: number) => {
   return await request.put({ url: '/crm/clue/transform', params: { id } })

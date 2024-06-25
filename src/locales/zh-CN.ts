@@ -41,6 +41,7 @@ export default {
     expand: '展开',
     confirmTitle: '系统提示',
     exportMessage: '是否确认导出数据项？',
+    transformMessage: '是否确认转移数据项？',
     importMessage: '是否确认导入数据项？',
     createSuccess: '新增成功',
     updateSuccess: '修改成功',

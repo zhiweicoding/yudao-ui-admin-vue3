@@ -41,6 +41,7 @@ export default {
     expand: 'Expand',
     confirmTitle: 'System Hint',
     exportMessage: 'Whether to confirm export data item?',
+    transformMessage: 'Whether to confirm transform data item?',
     importMessage: 'Whether to confirm import data item?',
     createSuccess: 'Create Success',
     updateSuccess: 'Update Success',

@@ -108,6 +108,11 @@ export const transferCustomer = async (data: TransferReqVO) => {
   return await request.put({ url: '/crm/customer/transfer', data })
 }
 
+// 客户转移
+export const batchTransferCustomer = async (data: Array<TransferReqVO>) => {
+  return await request.put({ url: '/crm/customer/batchTransfer', data })
+}
+
 // 锁定/解锁客户
 export const lockCustomer = async (id: number, lockStatus: boolean) => {
   return await request.put({ url: `/crm/customer/lock`, data: { id, lockStatus } })

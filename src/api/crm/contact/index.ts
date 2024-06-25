@@ -111,3 +111,7 @@ export const deleteContactBusinessList2 = async (data: ContactBusiness2ReqVO) =>
 export const transferContact = async (data: TransferReqVO) => {
   return await request.put({ url: '/crm/contact/transfer', data })
 }
+
+export const batchTransferContact = async (data: Array<TransferReqVO>) => {
+  return await request.put({ url: '/crm/contact/batchTransfer', data })
+}
