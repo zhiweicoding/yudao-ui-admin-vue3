@@ -60,10 +60,10 @@
       <el-tab-pane label="商机" lazy>
         <BusinessList :biz-id="customer.id!" :biz-type="BizTypeEnum.CRM_CUSTOMER" />
       </el-tab-pane>
-      <el-tab-pane label="合同" lazy>
+      <el-tab-pane label="合同" v-hasPermi="['crm:contract:query']" lazy>
         <ContractList :biz-id="customer.id!" :biz-type="BizTypeEnum.CRM_CUSTOMER" />
       </el-tab-pane>
-      <el-tab-pane label="回款" lazy>
+      <el-tab-pane label="回款" v-hasPermi="['crm:receivable:query']" lazy>
         <ReceivablePlanList :customer-id="customer.id!" @create-receivable="createReceivable" />
         <ReceivableList ref="receivableListRef" :customer-id="customer.id!" />
       </el-tab-pane>

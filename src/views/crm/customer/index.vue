@@ -110,6 +110,10 @@
           <Icon class="mr-5px" icon="ep:promotion"/>
           批量转移
         </el-button>
+        <el-button v-hasPermi="['crm:customer:update']" plain type="danger" @click="batchDeleteCustomer">
+          <Icon class="mr-5px" icon="ep:delete"/>
+          批量删除
+        </el-button>
       </el-form-item>
     </el-form>
   </ContentWrap>
@@ -132,11 +136,11 @@
           </el-link>
         </template>
       </el-table-column>
-<!--      <el-table-column align="center" label="客户来源" prop="source" width="100">-->
-<!--        <template #default="scope">-->
-<!--          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_SOURCE" :value="scope.row.source"/>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column align="center" label="客户来源" prop="source" width="100">-->
+      <!--        <template #default="scope">-->
+      <!--          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_SOURCE" :value="scope.row.source"/>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column align="center" label="手机" prop="mobile" width="120"/>
       <el-table-column align="center" label="性别" prop="telephone" width="130"/>
       <el-table-column align="center" label="备注" prop="remark" width="200"/>
@@ -145,11 +149,11 @@
           <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_LEVEL" :value="scope.row.level"/>
         </template>
       </el-table-column>
-<!--      <el-table-column align="center" label="客户行业" prop="industryId" width="100">-->
-<!--        <template #default="scope">-->
-<!--          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_INDUSTRY" :value="scope.row.industryId"/>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column align="center" label="客户行业" prop="industryId" width="100">-->
+      <!--        <template #default="scope">-->
+      <!--          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_INDUSTRY" :value="scope.row.industryId"/>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column
         :formatter="dateFormatter"
         align="center"
@@ -157,7 +161,7 @@
         prop="contactNextTime"
         width="180px"
       />
-<!--      <el-table-column align="center" label="邮箱" prop="email" width="140"/>-->
+      <!--      <el-table-column align="center" label="邮箱" prop="email" width="140"/>-->
       <el-table-column align="center" label="锁定状态" prop="lockStatus">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.lockStatus"/>
@@ -268,6 +272,7 @@ const queryParams = reactive({
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
+const delLoading = ref(false) // del的加载中
 const transformLoading = ref(false) // transform 加载中
 const activeName = ref('1') // 列表 tab
 const multipleSelection = ref<number[]>([])
@@ -359,6 +364,25 @@ const transformCustomer = async () => {
   if (multipleSelection.value.length > 0) {
     console.log(`multipleSelection.value：${multipleSelection.value}`)
     transferFormRef.value?.open(multipleSelection.value)
+  } else {
+    message.error('没有选择客户')
+  }
+}
+
+const batchDeleteCustomer = async () => {
+  if (multipleSelection.value.length > 0) {
+    try {
+      // del的二次确认
+      await message.delConfirm()
+      // 发起导出
+      delLoading.value = true
+      await CustomerApi.batchDeleteCustomer(multipleSelection.value)
+      message.success(t('common.delSuccess'))
+    } catch (e) {
+      console.log(e)
+    } finally {
+      delLoading.value = false
+    }
   } else {
     message.error('没有选择客户')
   }
