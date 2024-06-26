@@ -2,7 +2,7 @@
 <template>
   <!-- 操作栏 -->
   <el-row class="mb-10px" justify="end">
-    <el-button @click="openForm">
+    <el-button @click="openForm" >
       <Icon class="mr-5px" icon="ep:edit" />
       写跟进
     </el-button>

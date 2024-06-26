@@ -36,6 +36,20 @@
             <el-input v-model="formData.content" :rows="3" type="textarea" />
           </el-form-item>
         </el-col>
+        <el-col :span="24">
+          <el-form-item label="标签">
+            <div>
+              <el-tag
+                v-for="tag in tags"
+                :key="tag"
+                @click="addTagToContent(tag)"
+                class="tag-item"
+              >
+                {{ tag }}
+              </el-tag>
+            </div>
+          </el-form-item>
+        </el-col>
         <el-col :span="12">
           <el-form-item label="图片" prop="picUrls">
             <UploadImgs v-model="formData.picUrls" class="min-w-80px" />
@@ -94,6 +108,8 @@ import BusinessListModal from '@/views/crm/business/components/BusinessListModal
 import * as BusinessApi from '@/api/crm/business'
 import ContactListModal from '@/views/crm/contact/components/ContactListModal.vue'
 import * as ContactApi from '@/api/crm/contact'
+import { ref, watch } from 'vue'
+
 
 defineOptions({ name: 'FollowUpRecordForm' })
 
@@ -107,8 +123,23 @@ const formData = ref({
   bizType: undefined,
   bizId: undefined,
   businesses: [],
-  contacts: []
+  contacts: [],
+  selectedTags: [],
+  content: ''
 })
+
+// 定义标签列表
+const tags = [
+  '空号', '停机', '正在通话', '加微信', '有房', '有车', '有公积金', '有社保', '征信良好'
+]
+
+// 添加标签到content中
+const addTagToContent = (tag: string) => {
+  formData.value.content = formData.value.content
+    ? `${formData.value.content}, ${tag}`
+    : tag
+}
+
 const formRules = reactive({
   type: [{ required: true, message: '跟进类型不能为空', trigger: 'change' }],
   content: [{ required: true, message: '跟进内容不能为空', trigger: 'blur' }],
@@ -139,6 +170,7 @@ const submitForm = async () => {
       contactIds: formData.value.contacts.map((item) => item.id),
       businessIds: formData.value.businesses.map((item) => item.id)
     } as unknown as FollowUpRecordVO
+    delete data.selectedTags // 移除 selectedTags 字段
     await FollowUpRecordApi.createFollowUpRecord(data)
     message.success(t('common.createSuccess'))
     dialogVisible.value = false
@@ -182,7 +214,16 @@ const resetForm = () => {
     bizId: undefined,
     bizType: undefined,
     businesses: [],
-    contacts: []
+    contacts: [],
+    selectedTags: [],
+    content: ''
   }
 }
 </script>
+
+<style scoped>
+.tag-item {
+  margin: 5px 5px 0 0;
+  cursor: pointer;
+}
+</style>

@@ -42,9 +42,9 @@
       <el-tab-pane label="跟进记录">
         <FollowUpList :biz-id="customerId" :biz-type="BizTypeEnum.CRM_CUSTOMER" />
       </el-tab-pane>
-      <el-tab-pane label="基本信息">
-        <CustomerDetailsInfo :customer="customer" />
-      </el-tab-pane>
+<!--      <el-tab-pane label="基本信息">-->
+<!--        <CustomerDetailsInfo :customer="customer" />-->
+<!--      </el-tab-pane>-->
       <el-tab-pane label="联系人" lazy>
         <ContactList :biz-id="customer.id!" :biz-type="BizTypeEnum.CRM_CUSTOMER" />
       </el-tab-pane>
@@ -82,7 +82,7 @@
 import { useTagsViewStore } from '@/store/modules/tagsView'
 import * as CustomerApi from '@/api/crm/customer'
 import CustomerForm from '@/views/crm/customer/CustomerForm.vue'
-import CustomerDetailsInfo from './CustomerDetailsInfo.vue' // 客户明细 - 详细信息
+// import CustomerDetailsInfo from './CustomerDetailsInfo.vue' // 客户明细 - 详细信息
 import CustomerDetailsHeader from './CustomerDetailsHeader.vue' // 客户明细 - 头部
 import ContactList from '@/views/crm/contact/components/ContactList.vue' // 联系人列表
 import ContractList from '@/views/crm/contract/components/ContractList.vue' // 合同列表

@@ -144,11 +144,7 @@
       <el-table-column align="center" label="手机" prop="mobile" width="120"/>
       <el-table-column align="center" label="性别" prop="telephone" width="130"/>
       <el-table-column align="center" label="备注" prop="remark" width="200"/>
-      <el-table-column align="center" label="客户级别" prop="level" width="135">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_LEVEL" :value="scope.row.level"/>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" label="最后跟进记录" prop="contactLastContent" width="200"/>
       <!--      <el-table-column align="center" label="客户行业" prop="industryId" width="100">-->
       <!--        <template #default="scope">-->
       <!--          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_INDUSTRY" :value="scope.row.industryId"/>-->
@@ -179,7 +175,11 @@
         prop="contactLastTime"
         width="180px"
       />
-      <el-table-column align="center" label="最后跟进记录" prop="contactLastContent" width="200"/>
+      <el-table-column align="center" label="客户级别" prop="level" width="135">
+        <template #default="scope">
+          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_LEVEL" :value="scope.row.level"/>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="地址" prop="detailAddress" width="180"/>
       <el-table-column align="center" label="距离进入公海天数" prop="poolDay" width="140">
         <template #default="scope"> {{ scope.row.poolDay }} 天</template>
