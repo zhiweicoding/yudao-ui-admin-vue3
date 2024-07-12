@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { formatDate } from '@/utils/formatTime'
+import {formatDate} from '@/utils/formatTime'
 import * as NotifyMessageApi from '@/api/system/notify/message'
 
-defineOptions({ name: 'Message' })
+defineOptions({name: 'Message'})
 
-const { push } = useRouter()
+const {push} = useRouter()
 const activeName = ref('notice')
 const unreadCount = ref(0) // 未读消息数量
 const list = ref<any[]>([]) // 消息列表
@@ -39,7 +39,7 @@ onMounted(() => {
     () => {
       getUnreadCount()
     },
-    1000 * 60 * 2
+    1000 * 60
   )
 })
 </script>
@@ -48,7 +48,7 @@ onMounted(() => {
     <ElPopover :width="400" placement="bottom" trigger="click">
       <template #reference>
         <ElBadge :is-dot="unreadCount > 0" class="item">
-          <Icon :size="18" class="cursor-pointer" icon="ep:bell" @click="getList" />
+          <Icon :size="18" class="cursor-pointer" icon="ep:bell" @click="getList"/>
         </ElBadge>
       </template>
       <ElTabs v-model="activeName">
@@ -56,7 +56,7 @@ onMounted(() => {
           <el-scrollbar class="message-list">
             <template v-for="item in list" :key="item.id">
               <div class="message-item">
-                <img alt="" class="message-icon" src="@/assets/imgs/avatar.gif" />
+                <img alt="" class="message-icon" src="@/assets/imgs/avatar.gif"/>
                 <div class="message-content">
                   <span class="message-title">
                     {{ item.templateNickname }}：{{ item.templateContent }}
@@ -72,7 +72,7 @@ onMounted(() => {
       </ElTabs>
       <!-- 更多 -->
       <div style="margin-top: 10px; text-align: right">
-        <XButton preIcon="ep:view" title="查看全部" type="primary" @click="goMyList" />
+        <XButton preIcon="ep:view" title="查看全部" type="primary" @click="goMyList"/>
       </div>
     </ElPopover>
   </div>
