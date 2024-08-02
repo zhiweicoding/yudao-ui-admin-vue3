@@ -11,21 +11,21 @@
       class="-mb-15px"
       label-width="68px"
     >
-      <el-form-item label="客户名称" prop="customerId">
-        <el-select
-          v-model="queryParams.customerId"
-          class="!w-240px"
-          placeholder="请选择客户"
-          @keyup.enter="handleQuery"
-        >
-          <el-option
-            v-for="item in customerList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="客户名称" prop="customerId">-->
+<!--        <el-select-->
+<!--          v-model="queryParams.customerId"-->
+<!--          class="!w-240px"-->
+<!--          placeholder="请选择客户"-->
+<!--          @keyup.enter="handleQuery"-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in customerList"-->
+<!--            :key="item.id"-->
+<!--            :label="item.name"-->
+<!--            :value="item.id"-->
+<!--          />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item label="合同编号" prop="contractNo">
         <el-input
           v-model="queryParams.contractNo"
@@ -329,7 +329,7 @@ const openCustomerDetail = (id: number) => {
 /** 初始化 **/
 onMounted(async () => {
   await getList()
-  // 获得客户列表
-  customerList.value = await CustomerApi.getCustomerSimpleList()
+  // // 获得客户列表
+  // customerList.value = await CustomerApi.getCustomerSimpleList()
 })
 </script>

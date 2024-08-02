@@ -29,21 +29,36 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="所属行业" prop="industryId">
+      <el-form-item label="服务客服" prop="ownerUserId">
         <el-select
-          v-model="queryParams.industryId"
+          v-model="queryParams.ownerUserId"
           class="!w-240px"
           clearable
-          placeholder="请选择所属行业"
+          placeholder="请选择服务客服"
         >
           <el-option
-            v-for="dict in getIntDictOptions(DICT_TYPE.CRM_CUSTOMER_INDUSTRY)"
+            v-for="dict in staffList"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
         </el-select>
       </el-form-item>
+      <!--      <el-form-item label="所属行业" prop="industryId">-->
+      <!--        <el-select-->
+      <!--          v-model="queryParams.industryId"-->
+      <!--          class="!w-240px"-->
+      <!--          clearable-->
+      <!--          placeholder="请选择所属行业"-->
+      <!--        >-->
+      <!--          <el-option-->
+      <!--            v-for="dict in getIntDictOptions(DICT_TYPE.CRM_CUSTOMER_INDUSTRY)"-->
+      <!--            :key="dict.value"-->
+      <!--            :label="dict.label"-->
+      <!--            :value="dict.value"-->
+      <!--          />-->
+      <!--        </el-select>-->
+      <!--      </el-form-item>-->
       <el-form-item label="客户级别" prop="level">
         <el-select
           v-model="queryParams.level"
@@ -110,7 +125,9 @@
           <Icon class="mr-5px" icon="ep:promotion"/>
           批量转移
         </el-button>
-        <el-button v-hasPermi="['crm:customer:update']" plain type="danger" @click="batchDeleteCustomer">
+        <el-button
+          v-hasPermi="['crm:customer:update']" plain type="danger"
+          @click="batchDeleteCustomer">
           <Icon class="mr-5px" icon="ep:delete"/>
           批量删除
         </el-button>
@@ -240,10 +257,11 @@
 </template>
 
 <script lang="ts" setup>
-import {DICT_TYPE, getIntDictOptions} from '@/utils/dict'
+import {DICT_TYPE, getIntDictOptions, NumberDictDataType} from '@/utils/dict'
 import {dateFormatter} from '@/utils/formatTime'
 import download from '@/utils/download'
 import * as CustomerApi from '@/api/crm/customer'
+import * as UserApi from '@/api/system/user'
 import CustomerForm from './CustomerForm.vue'
 import CustomerImportForm from './CustomerImportForm.vue'
 import {TabsPaneContext} from 'element-plus'
@@ -265,6 +283,7 @@ const queryParams = reactive({
   sceneType: '1', // 默认和 activeName 相等
   name: '',
   mobile: '',
+  ownerUserId: undefined,
   industryId: undefined,
   level: undefined,
   source: undefined,
@@ -276,6 +295,8 @@ const delLoading = ref(false) // del的加载中
 const transformLoading = ref(false) // transform 加载中
 const activeName = ref('1') // 列表 tab
 const multipleSelection = ref<number[]>([])
+const staffList = ref<NumberDictDataType[]>([]) // 存储客服列表数据
+
 
 /** tab 切换 */
 const handleTabClick = (tab: TabsPaneContext) => {
@@ -292,6 +313,19 @@ const getList = async () => {
     total.value = data.total
   } finally {
     loading.value = false
+  }
+}
+
+/** 查询列表 */
+const getStaffList = async () => {
+  const data = await UserApi.getSimpleUserList()
+  if (data.length > 0) {
+    staffList.value = data
+      .filter(user => user.id !== 142)
+      .map(user => ({
+        value: user.id,
+        label: user.nickname || '客服无名称'
+      })) as NumberDictDataType[];
   }
 }
 
@@ -400,5 +434,6 @@ watch(
 /** 初始化 **/
 onMounted(() => {
   getList()
+  getStaffList()
 })
 </script>
