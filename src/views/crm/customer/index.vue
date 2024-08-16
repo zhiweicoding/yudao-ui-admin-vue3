@@ -89,6 +89,21 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="是否锁定" prop="lockStatus">
+        <el-select
+          v-model="queryParams.lockStatus"
+          class="!w-240px"
+          clearable
+          placeholder="请选择是否锁定"
+        >
+          <el-option
+            v-for="dict in getBoolDictOptions(DICT_TYPE.CRM_LOCK_STATUS)"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery">
           <Icon class="mr-5px" icon="ep:search"/>
@@ -257,7 +272,7 @@
 </template>
 
 <script lang="ts" setup>
-import {DICT_TYPE, getIntDictOptions, NumberDictDataType} from '@/utils/dict'
+import {DICT_TYPE, getBoolDictOptions, getIntDictOptions, NumberDictDataType} from '@/utils/dict'
 import {dateFormatter} from '@/utils/formatTime'
 import download from '@/utils/download'
 import * as CustomerApi from '@/api/crm/customer'
@@ -287,6 +302,7 @@ const queryParams = reactive({
   industryId: undefined,
   level: undefined,
   source: undefined,
+  lockStatus: undefined,
   pool: undefined
 })
 const queryFormRef = ref() // 搜索的表单

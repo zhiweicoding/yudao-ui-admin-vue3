@@ -204,6 +204,7 @@ export enum DICT_TYPE {
   CRM_CUSTOMER_LEVEL = 'crm_customer_level', // CRM 客户级别
   CRM_CUSTOMER_SOURCE = 'crm_customer_source', // CRM 客户来源
   CRM_PRODUCT_STATUS = 'crm_product_status', // CRM 商品状态
+  CRM_LOCK_STATUS = 'crm_lock_status', // CRM 是否锁定
   CRM_PERMISSION_LEVEL = 'crm_permission_level', // CRM 数据权限的级别
   CRM_PRODUCT_UNIT = 'crm_product_unit', // CRM 产品单位
   CRM_FOLLOW_UP_TYPE = 'crm_follow_up_type', // CRM 跟进方式

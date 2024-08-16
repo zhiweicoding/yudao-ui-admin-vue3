@@ -1,6 +1,6 @@
 <template>
-  <doc-alert title="【客户】客户管理、公海客户" url="https://doc.iocoder.cn/crm/customer/" />
-  <doc-alert title="【通用】数据权限" url="https://doc.iocoder.cn/crm/permission/" />
+  <doc-alert title="【客户】客户管理、公海客户" url="https://doc.iocoder.cn/crm/customer/"/>
+  <doc-alert title="【通用】数据权限" url="https://doc.iocoder.cn/crm/permission/"/>
 
   <ContentWrap>
     <!-- 搜索工作栏 -->
@@ -76,11 +76,11 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery">
-          <Icon class="mr-5px" icon="ep:search" />
+          <Icon class="mr-5px" icon="ep:search"/>
           搜索
         </el-button>
         <el-button @click="resetQuery(undefined)">
-          <Icon class="mr-5px" icon="ep:refresh" />
+          <Icon class="mr-5px" icon="ep:refresh"/>
           重置
         </el-button>
         <el-button
@@ -90,8 +90,17 @@
           type="success"
           @click="handleExport"
         >
-          <Icon class="mr-5px" icon="ep:download" />
+          <Icon class="mr-5px" icon="ep:download"/>
           导出
+        </el-button>
+        <el-button
+          v-hasPermi="['crm:customer:create']"
+          :loading="transformLoading"
+          plain
+          @click="transformCustomer"
+        >
+          <Icon class="mr-5px" icon="ep:promotion"/>
+          批量转移
         </el-button>
       </el-form-item>
     </el-form>
@@ -99,7 +108,10 @@
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
+    <el-table
+      v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true"
+      @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55"/>
       <el-table-column align="center" label="客户名称" fixed="left" prop="name" width="160">
         <template #default="scope">
           <el-link :underline="false" type="primary" @click="openDetail(scope.row.id)">
@@ -109,20 +121,20 @@
       </el-table-column>
       <el-table-column align="center" label="客户来源" prop="source" width="100">
         <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_SOURCE" :value="scope.row.source" />
+          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_SOURCE" :value="scope.row.source"/>
         </template>
       </el-table-column>
-      <el-table-column label="手机" align="center" prop="mobile" width="120" />
-      <el-table-column label="性别" align="center" prop="telephone" width="130" />
-<!--      <el-table-column label="邮箱" align="center" prop="email" width="180" />-->
+      <el-table-column label="手机" align="center" prop="mobile" width="120"/>
+      <el-table-column label="性别" align="center" prop="telephone" width="130"/>
+      <!--      <el-table-column label="邮箱" align="center" prop="email" width="180" />-->
       <el-table-column align="center" label="客户级别" prop="level" width="135">
         <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_LEVEL" :value="scope.row.level" />
+          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_LEVEL" :value="scope.row.level"/>
         </template>
       </el-table-column>
       <el-table-column align="center" label="客户行业" prop="industryId" width="100">
         <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_INDUSTRY" :value="scope.row.industryId" />
+          <dict-tag :type="DICT_TYPE.CRM_CUSTOMER_INDUSTRY" :value="scope.row.industryId"/>
         </template>
       </el-table-column>
       <el-table-column
@@ -132,10 +144,10 @@
         prop="contactNextTime"
         width="180px"
       />
-      <el-table-column align="center" label="备注" prop="remark" width="200" />
+      <el-table-column align="center" label="备注" prop="remark" width="200"/>
       <el-table-column align="center" label="成交状态" prop="dealStatus">
         <template #default="scope">
-          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.dealStatus" />
+          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.dealStatus"/>
         </template>
       </el-table-column>
       <el-table-column
@@ -145,7 +157,7 @@
         prop="contactLastTime"
         width="180px"
       />
-      <el-table-column align="center" label="最后跟进记录" prop="contactLastContent" width="200" />
+      <el-table-column align="center" label="最后跟进记录" prop="contactLastContent" width="200"/>
       <el-table-column
         :formatter="dateFormatter"
         align="center"
@@ -160,7 +172,7 @@
         prop="createTime"
         width="180px"
       />
-      <el-table-column align="center" label="创建人" prop="creatorName" width="100px" />
+      <el-table-column align="center" label="创建人" prop="creatorName" width="100px"/>
     </el-table>
     <!-- 分页 -->
     <Pagination
@@ -170,15 +182,21 @@
       @pagination="getList"
     />
   </ContentWrap>
+vi
+  <CrmBatchTransferForm
+    ref="transferFormRef" @success="getList"
+    :biz-type="BizTypeEnum.CRM_CUSTOMER"/>
 </template>
 
 <script lang="ts" setup>
-import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
-import { dateFormatter } from '@/utils/formatTime'
+import {DICT_TYPE, getIntDictOptions} from '@/utils/dict'
+import {dateFormatter} from '@/utils/formatTime'
 import download from '@/utils/download'
 import * as CustomerApi from '@/api/crm/customer'
+import CrmBatchTransferForm from "@/views/crm/permission/components/BatchTransferForm.vue";
+import {BizTypeEnum} from "@/api/crm/permission";
 
-defineOptions({ name: 'CrmCustomerPool' })
+defineOptions({name: 'CrmCustomerPool'})
 
 const message = useMessage() // 消息弹窗
 
@@ -198,6 +216,8 @@ const queryParams = ref({
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
+const transformLoading = ref(false) // transform 加载中
+const multipleSelection = ref<number[]>([])
 
 /** 查询列表 */
 const getList = async () => {
@@ -235,9 +255,9 @@ const resetQuery = () => {
 }
 
 /** 打开客户详情 */
-const { currentRoute, push } = useRouter()
+const {currentRoute, push} = useRouter()
 const openDetail = (id: number) => {
-  push({ name: 'CrmCustomerDetail', params: { id } })
+  push({name: 'CrmCustomerDetail', params: {id}})
 }
 
 /** 导出按钮操作 */
@@ -252,6 +272,21 @@ const handleExport = async () => {
   } catch {
   } finally {
     exportLoading.value = false
+  }
+}
+
+const transferFormRef = ref<InstanceType<typeof CrmBatchTransferForm>>()
+const handleSelectionChange = (val?: any) => {
+  console.log(`val id:${JSON.stringify(val)}`)
+  multipleSelection.value = val.map(item => item.id)
+}
+
+const transformCustomer = async () => {
+  if (multipleSelection.value.length > 0) {
+    console.log(`multipleSelection.value：${multipleSelection.value}`)
+    transferFormRef.value?.open(multipleSelection.value)
+  } else {
+    message.error('没有选择客户')
   }
 }
 
