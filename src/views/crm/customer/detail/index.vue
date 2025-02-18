@@ -1,5 +1,15 @@
 <template>
   <CustomerDetailsHeader :customer="customer" :loading="loading">
+    <template #nav-buttons>
+      <el-button :disabled="!hasPrev" @click="handlePrev">
+        <Icon icon="ep:arrow-left" class="mr-5px" />
+        上一个
+      </el-button>
+      <el-button :disabled="!hasNext" @click="handleNext">
+        下一个
+        <Icon icon="ep:arrow-right" class="ml-5px" />
+      </el-button>
+    </template>
     <el-button
       v-if="permissionListRef?.validateWrite"
       v-hasPermi="['crm:customer:update']"
@@ -96,6 +106,7 @@ import { BizTypeEnum } from '@/api/crm/permission'
 import type { OperateLogVO } from '@/api/system/operatelog'
 import { getOperateLogPage } from '@/api/crm/operateLog'
 import CustomerDistributeForm from '@/views/crm/customer/pool/CustomerDistributeForm.vue'
+import {ElMessage} from "element-plus";
 
 defineOptions({ name: 'CrmCustomerDetail' })
 
@@ -208,6 +219,38 @@ const close = () => {
   push({ name: 'CrmCustomer' })
 }
 
+const customerList = ref<CustomerApi.CustomerVO[]>([]) // 客户列表
+const currentIndex = ref(-1) // 当前客户在列表中的索引
+const hasPrev = computed(() => currentIndex.value > 0)
+const hasNext = computed(() => currentIndex.value < customerList.value.length - 1)
+
+/** 获取客户列表 */
+const getCustomerList = async () => {
+  customerList.value = await CustomerApi.getCustomerSimpleList()
+  // 找到当前客户在列表中的位置
+  currentIndex.value = customerList.value.findIndex((item) => item.id === customerId.value)
+}
+
+/** 处理上一个客户 */
+const handlePrev = () => {
+  if (!hasPrev.value) {
+    ElMessage.warning('已经是第一个客户')
+    return
+  }
+  const prevCustomer = customerList.value[currentIndex.value - 1]
+  push({ name: 'CrmCustomerDetail', params: { id: prevCustomer.id } })
+}
+
+/** 处理下一个客户 */
+const handleNext = () => {
+  if (!hasNext.value) {
+    ElMessage.warning('已经是最后一个客户')
+    return
+  }
+  const nextCustomer = customerList.value[currentIndex.value + 1]
+  push({ name: 'CrmCustomerDetail', params: { id: nextCustomer.id } })
+}
+
 /** 初始化 */
 const { params } = useRoute()
 onMounted(() => {
@@ -218,5 +261,6 @@ onMounted(() => {
   }
   customerId.value = params.id as unknown as number
   getCustomer()
+  getCustomerList() // 获取客户列表用于导航
 })
 </script>

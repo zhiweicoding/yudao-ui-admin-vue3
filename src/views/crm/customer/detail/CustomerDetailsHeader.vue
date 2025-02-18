@@ -9,7 +9,9 @@
           </el-row>
         </el-col>
       </div>
-      <div>
+      <div class="flex items-center">
+        <!-- 导航按钮 -->
+        <slot name="nav-buttons"></slot>
         <!-- 右上：按钮 -->
         <slot></slot>
       </div>
