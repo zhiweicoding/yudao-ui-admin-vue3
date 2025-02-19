@@ -219,48 +219,50 @@ const close = () => {
   push({ name: 'CrmCustomer' })
 }
 
-const customerList = ref<CustomerApi.CustomerVO[]>([]) // 客户列表
+const customerList = shallowRef<CustomerApi.CustomerVO[]>([]) // 客户列表
 const currentIndex = ref(-1) // 当前客户在列表中的索引
+
+// 监听路由变化
+watch(() => params.id, async (newVal) => {
+  if (!newVal) return
+  customerId.value = Number(newVal)
+  await getCustomer()
+  await getCustomerList() // 每次路由变化都要重新获取列表
+})
+
+// 修改计算属性
 const hasPrev = computed(() => currentIndex.value > 0)
-const hasNext = computed(() => currentIndex.value < customerList.value.length - 1)
+const hasNext = computed(() => currentIndex.value >= 0 && currentIndex.value < customerList.value.length - 1)
 
 /** 获取客户列表 */
 const getCustomerList = async () => {
-  customerList.value = await CustomerApi.getCustomerSimpleList()
-  // 找到当前客户在列表中的位置
-  currentIndex.value = customerList.value.findIndex((item) => item.id === customerId.value)
+  const list = await CustomerApi.getCustomerSimpleList()
+  customerList.value = list
+  currentIndex.value = list.findIndex(item => item.id === customerId.value)
 }
 
-/** 处理上一个客户 */
+// 导航处理方法
 const handlePrev = () => {
-  if (!hasPrev.value) {
-    ElMessage.warning('已经是第一个客户')
-    return
-  }
-  const prevCustomer = customerList.value[currentIndex.value - 1]
-  push({ name: 'CrmCustomerDetail', params: { id: prevCustomer.id } })
+  if (!hasPrev.value) return
+  const prevId = customerList.value[currentIndex.value - 1].id
+  push({ name: 'CrmCustomerDetail', params: { id: prevId } })
 }
 
-/** 处理下一个客户 */
 const handleNext = () => {
-  if (!hasNext.value) {
-    ElMessage.warning('已经是最后一个客户')
-    return
-  }
-  const nextCustomer = customerList.value[currentIndex.value + 1]
-  push({ name: 'CrmCustomerDetail', params: { id: nextCustomer.id } })
+  if (!hasNext.value) return
+  const nextId = customerList.value[currentIndex.value + 1].id
+  push({ name: 'CrmCustomerDetail', params: { id: nextId } })
 }
 
 /** 初始化 */
 const { params } = useRoute()
-onMounted(() => {
+onMounted(async () => {
   if (!params.id) {
     message.warning('参数错误，客户不能为空！')
     close()
     return
   }
   customerId.value = params.id as unknown as number
-  getCustomer()
-  getCustomerList() // 获取客户列表用于导航
+  await Promise.all([getCustomer(), getCustomerList()]) // 并行请求
 })
 </script>
